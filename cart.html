@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Cart - MobileShop</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <nav class="navbar container">
+            <a href="Home.html" class="logo">MobileShop</a>
+            <div class="nav-links">
+                <a href="Home.html">Home</a>
+                <a href="cart.html">Cart</a>
+                <a href="bookings.html">Orders</a>
+                <a href="logout.php">Logout</a>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container">
+        <h1>Your Shopping Cart</h1>
+        <div class="cart-container">
+            <!-- Cart items will be loaded dynamically -->
+        </div>
+
+        <div class="cart-summary">
+            <h2>Order Summary</h2>
+            <div class="summary-details">
+                <p>Subtotal: <span class="cart-total">₹0.00</span></p>
+                <p>Shipping: <span>Free</span></p>
+                <p>Total: <span class="cart-total">₹0.00</span></p>
+            </div>
+            <button class="btn btn-block" onclick="checkout()">Proceed to Checkout</button>
+        </div>
+    </main>
+
+    <script src="assets/js/main.js"></script>
+    <script>
+        async function checkout() {
+            try {
+                const response = await api.getCart();
+                if (response.status === 'success' && response.items.length > 0) {
+                    window.location.href = 'payment.html';
+                } else {
+                    showAlert('Your cart is empty', 'error');
+                }
+            } catch (error) {
+                console.error('Checkout failed:', error);
+                showAlert('Failed to proceed to checkout', 'error');
+            }
+        }
+    </script>
+</body>
+</html>

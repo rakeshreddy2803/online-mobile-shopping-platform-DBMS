@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Orders - MobileShop</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <nav class="navbar container">
+            <a href="Home.html" class="logo">MobileShop</a>
+            <div class="nav-links">
+                <a href="Home.html">Home</a>
+                <a href="cart.html">Cart</a>
+                <a href="bookings.html">Orders</a>
+                <a href="logout.php">Logout</a>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container">
+        <h1>Your Orders</h1>
+        <div class="orders-container">
+            <!-- Orders will be loaded dynamically -->
+        </div>
+    </main>
+
+    <script src="assets/js/main.js"></script>
+    <script>
+        async function loadOrders() {
+            try {
+                const response = await api.request('php/get_orders.php');
+                if (response.status === 'success') {
+                    const ordersContainer = document.querySelector('.orders-container');
+                    if (response.orders.length === 0) {
+                        ordersContainer.innerHTML = '<p>You have no orders yet.</p>';
+                        return;
+                    }
+
+                    ordersContainer.innerHTML = response.orders.map(order => `
+                        <div class="order-card">
+                            <div class="order-header">
+                                <h3>Order #${order.order_id}</h3>
+                                <span class="order-status ${order.status.toLowerCase()}">${order.status}</span>
+                            </div>
+                            <div class="order-details">
+                                <p>Date: ${new Date(order.order_date).toLocaleDateString()}</p>
+                                <p>Total: ${formatPrice(order.total_amount)}</p>
+                            </div>
+                            <div class="order-items">
+                                ${order.items.map(item => `
+                                    <div class="order-item">
+                                        <img src="assets/images/${item.mobile_id}.jpg" alt="${item.name}" class="order-item-image">
+                                        <div class="order-item-details">
+                                            <h4>${item.name}</h4>
+                                            <p>Quantity: ${item.quantity}</p>
+                                            <p>Price: ${formatPrice(item.price)}</p>
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    `).join('');
+                }
+            } catch (error) {
+                console.error('Failed to load orders:', error);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', loadOrders);
+    </script>
+</body>
+</html>
